@@ -15,4 +15,31 @@
         <listener class="com.github.reedoverflow.stage1streader.listeners.MyProjectManagerListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </applicationListeners>
+
+    <!-- 可以配置侧边的工具栏，例如maven所在的侧边栏 -->
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- 配置侧边工具栏，当且仅当第一次点击时，会初始化窗口类，anchor指定工具栏的位置 -->
+        <toolWindow id="S1 Selector" factoryClass="com.github.reedoverflow.stage1streader.window.WindowFactory" secondary="false"
+                    anchor="left" icon="AllIcons.Debugger.Db_watch">
+        </toolWindow>
+
+        <toolWindow id="S1 Reader" factoryClass="com.github.reedoverflow.stage1streader.window.WindowFactory" secondary="false"
+                    anchor="bottom" icon="AllIcons.Nodes.Folder">
+        </toolWindow>
+    </extensions>
+
+    <!-- 配置动作(事件），每次点击都会重新初始化 -->
+    <actions>
+        <action id="HelloWorld-project" class="com.github.reedoverflow.stage1streader.action.ProjectViewPopupAction"
+                text="Hello world - demo" description="Hello world">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+        </action>
+        <action id="HelloWorld-editor" class="com.github.reedoverflow.stage1streader.action.EditorPopupAction"
+                text="Hello world - demo"
+                description="Hello world">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
+    </actions>
+
+
 </idea-plugin>
