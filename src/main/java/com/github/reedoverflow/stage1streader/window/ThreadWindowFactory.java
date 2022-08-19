@@ -13,7 +13,7 @@ public class ThreadWindowFactory implements ToolWindowFactory {
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-        final ThreadListUI threadListUI = new ThreadListUI();
+        final ThreadListUI threadListUI = ThreadListUI.getInstance();
         final ContentFactory instance = ContentFactory.SERVICE.getInstance();
         final Content content = instance.createContent(threadListUI.createComponent(), "Thread", false);
         toolWindow.getContentManager().addContent(content);

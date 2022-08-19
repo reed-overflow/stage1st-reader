@@ -8,13 +8,15 @@ import java.awt.*;
 
 public class ThreadPanel extends JPanel {
 
+    private JBTextArea textArea = new JBTextArea();
+
     public ThreadPanel() {
         super();
-
-
-        JBTextArea textArea = new JBTextArea();
         textArea.setText("123");
-
         this.add(textArea);
+    }
+
+    public void setText(String text) {
+        textArea.setText(text);
     }
 }

@@ -12,11 +12,20 @@ import java.awt.*;
  */
 public class ForumListUI {
 
+    private static ForumListUI instance;
     private JPanel mainPanel;
 
-    public ForumListUI() {
+    static {
+        instance = new ForumListUI();
+    }
+
+    private ForumListUI() {
         mainPanel = new ForumListPanel();
         mainPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+    }
+
+    public static ForumListUI getInstance() {
+        return instance;
     }
 
     public JComponent createComponent() {
