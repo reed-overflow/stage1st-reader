@@ -1,5 +1,6 @@
 package com.github.reedoverflow.stage1streader.ui;
 
+import com.github.reedoverflow.stage1streader.ui.panel.ForumListPanel;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.Nls;
@@ -17,7 +18,7 @@ public class TestUI implements Configurable {
     private JPanel mainPanel;
 
     public TestUI() {
-        mainPanel = new MainPanel();
+        mainPanel = new ForumListPanel();
     }
 
     @Nls(capitalization = Nls.Capitalization.Title)

@@ -1,17 +1,10 @@
-package com.github.reedoverflow.stage1streader.ui;
+package com.github.reedoverflow.stage1streader.ui.panel;
 
 import com.github.reedoverflow.stage1streader.domain.Forum;
 import com.github.reedoverflow.stage1streader.service.DiscuzService;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.util.TreeFileChooserFactory;
-import com.intellij.ide.util.treeView.NodeRenderer;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.NlsContexts;
-import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetWrapper;
-import com.intellij.ui.PanelWithButtons;
 import com.intellij.ui.treeStructure.Tree;
-import com.intellij.util.ui.JBUI;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.tree.*;
@@ -24,9 +17,9 @@ import java.util.List;
  * @date 2022/1/26 14:47
  * @since 1.0.0
  */
-public class MainPanel extends JPanel {
+public class ForumListPanel extends JPanel {
 
-    public MainPanel() {
+    public ForumListPanel() {
         super();
         // 根节点
         DefaultMutableTreeNode top =
