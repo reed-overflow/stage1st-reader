@@ -1,10 +1,15 @@
 package com.github.reedoverflow.stage1streader.ui.panel;
 
 import com.github.reedoverflow.stage1streader.domain.Forum;
+import com.github.reedoverflow.stage1streader.domain.Thread;
 import com.github.reedoverflow.stage1streader.service.DiscuzService;
+import com.github.reedoverflow.stage1streader.ui.ThreadListUI;
+import com.google.zxing.common.StringUtils;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.treeStructure.Tree;
+import jnr.ffi.annotations.In;
 
 import javax.swing.*;
 import javax.swing.tree.*;
@@ -29,6 +34,7 @@ public class ForumListPanel extends JPanel {
 
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         tree.setCellRenderer(new MyTreeCellRenderer());
+
         // 节点监听
         MouseListener ml = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -46,6 +52,23 @@ public class ForumListPanel extends JPanel {
                         Object nodeInfo = node.getUserObject();
                         Forum forum = (Forum) nodeInfo;
                         Messages.showMessageDialog(forum.getDescription(), forum.getName(), Messages.getInformationIcon());
+
+                        String forumId = ((Forum) nodeInfo).getFid();
+                        if(StringUtil.isNotEmpty(forumId)) {
+                            DiscuzService discuzService = new DiscuzService();
+                            List<Thread> threadList = discuzService.getThreadList(Integer.valueOf(forumId), 1);
+
+                            ThreadListUI threadListUI = ThreadListUI.getInstance();
+
+                            StringBuilder stringBuilder = new StringBuilder();
+                            for (Thread thread: threadList
+                                 ) {
+                                stringBuilder.append(thread.getSubject()).append("\n");
+                            }
+
+                            threadListUI.setPanelText(stringBuilder.toString());
+                        }
+
                     }
                 }
             }

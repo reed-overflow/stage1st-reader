@@ -45,7 +45,12 @@ public class DiscuzService {
      */
     public List<Thread> getThreadList(int forumId, int page) {
         String requestUrl = Config.URL + "api/mobile/index.php?version=4&module=forumdisplay&fid="+forumId+"&page="+page;
-        return null;
+        Gson gson = new Gson();
+        List<Thread> threadList = new ArrayList<>();
+
+        // TODO: 2022/8/19 This
+
+        return threadList;
     }
 
     /**
