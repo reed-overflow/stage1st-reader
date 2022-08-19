@@ -28,7 +28,7 @@ public class MainPanel extends JPanel {
 
     public MainPanel() {
         super();
-
+        // 根节点
         DefaultMutableTreeNode top =
                 new DefaultMutableTreeNode("Forum list");
         createNodes(top);
@@ -45,11 +45,11 @@ public class MainPanel extends JPanel {
                     if(e.getClickCount() == 1) {
                     }
                     else if(e.getClickCount() == 2) {
+                        // 双击
                         DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
                         if (node == null) {
                             return;
                         }
-
                         Object nodeInfo = node.getUserObject();
                         Forum forum = (Forum) nodeInfo;
                         Messages.showMessageDialog(forum.getDescription(), forum.getName(), Messages.getInformationIcon());
@@ -58,20 +58,6 @@ public class MainPanel extends JPanel {
             }
         };
         tree.addMouseListener(ml);
-//        tree.addTreeSelectionListener(e -> {
-//            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-//            if (node == null) {
-//                return;
-//            }
-//
-//            Object nodeInfo = node.getUserObject();
-//            if (node.isLeaf()) {
-//                Forum forum = (Forum) nodeInfo;
-//                Messages.showMessageDialog(forum.getDescription(), forum.getName(), Messages.getInformationIcon());
-//
-//            }
-//        });
-
         this.add(tree);
     }
 
@@ -119,8 +105,10 @@ public class MainPanel extends JPanel {
             if (userObject instanceof Forum) {
 
                 if(((Forum) userObject).getSublist() == null || ((Forum) userObject).getSublist().size() == 0) {
-                    label.setIcon(AllIcons.FileTypes.Any_type);
+                    // 子节点
+                    label.setIcon(AllIcons.FileTypes.Text);
                 }else {
+                    // 根节点
                     label.setIcon(AllIcons.Nodes.Folder);
                 }
                 label.setText(((Forum) userObject).getName());

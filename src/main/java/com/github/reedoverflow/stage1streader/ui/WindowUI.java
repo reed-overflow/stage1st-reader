@@ -1,6 +1,7 @@
 package com.github.reedoverflow.stage1streader.ui;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author yanzhao
@@ -13,6 +14,7 @@ public class WindowUI {
 
     public WindowUI() {
         mainPanel = new MainPanel();
+        mainPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
     }
 
     public JComponent createComponent() {
