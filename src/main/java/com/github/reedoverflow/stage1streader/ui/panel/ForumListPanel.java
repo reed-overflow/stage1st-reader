@@ -29,12 +29,11 @@ public class ForumListPanel extends JPanel {
         super();
         tree.setPaintBusy(true);
         // 根节点
-        DefaultMutableTreeNode top =
-                new DefaultMutableTreeNode("Forum list");
+        DefaultMutableTreeNode top = new DefaultMutableTreeNode("Forum list");
         createNodes(top);
         tree = new Tree(top);
         tree.setPaintBusy(false);
-
+        // tree渲染
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         tree.setCellRenderer(new ColoredTreeCellRenderer() {
             @Override
@@ -55,7 +54,6 @@ public class ForumListPanel extends JPanel {
                 }
             }
         });
-
         // 节点监听
         MouseListener ml = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -104,6 +102,11 @@ public class ForumListPanel extends JPanel {
         }
     }
 
+    /**
+     * 字节点设置
+     * @param node
+     * @param forum
+     */
     private void setUpChildren(DefaultMutableTreeNode node, Forum forum) {
         if(forum.getSublist() != null && forum.getSublist().size() > 0) {
             for (Forum subForum: forum.getSublist()
