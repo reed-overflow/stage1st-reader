@@ -52,7 +52,7 @@ public class ThreadPanel extends JPanel {
                 }
             }
         });
-        MouseListener ml = new MouseAdapter() {
+        threadJBList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 Object object = threadJBList.getSelectedValue();
                 if(object != null && object instanceof Thread) {
@@ -62,8 +62,7 @@ public class ThreadPanel extends JPanel {
                     }
                 }
             }
-        };
-        threadJBList.addMouseListener(ml);
+        });
         // 页面布局
         BorderLayout borderLayout = new BorderLayout();
         borderLayout.addLayoutComponent(threadScrollPane, BorderLayout.WEST);
@@ -87,6 +86,8 @@ public class ThreadPanel extends JPanel {
 
         threadJBList.setPaintBusy(false);
 
+        // 滚动条回到顶部
+        threadScrollPane.getVerticalScrollBar().setValue(0);
     }
 
     public void getPostByThreadId(int threadId) {
@@ -102,5 +103,10 @@ public class ThreadPanel extends JPanel {
             stringBuilder.append(reply.getMessage()).append("\n");
         }
         textAreaPost.setText(stringBuilder.toString());
+
+        // 滚动条回到顶部
+        textAreaPost.setSelectionStart(0);
+        textAreaPost.setSelectionEnd(0);
+        postScrollPane.getVerticalScrollBar().setValue(postScrollPane.getVerticalScrollBar().getMaximum());
     }
 }
