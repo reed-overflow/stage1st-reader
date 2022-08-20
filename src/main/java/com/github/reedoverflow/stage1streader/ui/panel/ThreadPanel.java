@@ -97,6 +97,8 @@ public class ThreadPanel extends JPanel {
         StringBuilder stringBuilder = new StringBuilder();
         for (Reply reply: replyList
              ) {
+            stringBuilder.append("----------------------------\n");
+            stringBuilder.append(reply.getAuthor()).append("    ").append(reply.getDateline()).append("\n");
             stringBuilder.append(reply.getMessage()).append("\n");
         }
         textAreaPost.setText(stringBuilder.toString());
