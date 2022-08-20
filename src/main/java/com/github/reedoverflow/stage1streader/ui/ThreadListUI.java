@@ -1,10 +1,8 @@
 package com.github.reedoverflow.stage1streader.ui;
 
-import com.github.reedoverflow.stage1streader.ui.panel.ForumListPanel;
 import com.github.reedoverflow.stage1streader.ui.panel.ThreadPanel;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class ThreadListUI {
 
@@ -17,8 +15,6 @@ public class ThreadListUI {
 
     private ThreadListUI() {
         mainPanel = new ThreadPanel();
-//        mainPanel.setLayout(new BorderLayout());
-//        mainPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     }
 
     public static ThreadListUI getInstance() {
@@ -29,7 +25,7 @@ public class ThreadListUI {
         return mainPanel;
     }
 
-    public void setPanelText(String text) {
-        mainPanel.setText(text);
+    public void getThreadByForumId(int forumId) {
+        mainPanel.getThreadByForumId(forumId);
     }
 }

@@ -48,7 +48,21 @@ public class DiscuzService {
         Gson gson = new Gson();
         List<Thread> threadList = new ArrayList<>();
 
-        // TODO: 2022/8/19 This
+        try {
+            String result = HTTPUtil.doGet(requestUrl);
+            JsonObject jsonResult = (JsonObject) JsonParser.parseString(result);
+            JsonArray formArray = jsonResult.getAsJsonObject("Variables").getAsJsonArray("forum_threadlist");
+
+            Iterator it = formArray.iterator();
+            while (it.hasNext()) {
+                JsonElement element =(JsonElement) it.next();
+                Thread thread = gson.fromJson(element, Thread.class);
+                threadList.add(thread);
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return threadList;
     }
@@ -58,6 +72,25 @@ public class DiscuzService {
      */
     public List<Reply> getReplyList(int threadId, int page) {
         String requestUrl = Config.URL + "api/mobile/index.php?version=4&module=viewthread&tid="+threadId+"&page="+page;
-        return null;
+        Gson gson = new Gson();
+        List<Reply> replyList = new ArrayList<>();
+
+        try {
+            String result = HTTPUtil.doGet(requestUrl);
+            JsonObject jsonResult = (JsonObject) JsonParser.parseString(result);
+            JsonArray formArray = jsonResult.getAsJsonObject("Variables").getAsJsonArray("postlist");
+
+            Iterator it = formArray.iterator();
+            while (it.hasNext()) {
+                JsonElement element =(JsonElement) it.next();
+                Reply reply = gson.fromJson(element, Reply.class);
+                replyList.add(reply);
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return replyList;
     }
 }

@@ -4,12 +4,13 @@ import com.github.reedoverflow.stage1streader.domain.Forum;
 import com.github.reedoverflow.stage1streader.domain.Thread;
 import com.github.reedoverflow.stage1streader.service.DiscuzService;
 import com.github.reedoverflow.stage1streader.ui.ThreadListUI;
-import com.google.zxing.common.StringUtils;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.treeStructure.Tree;
 import jnr.ffi.annotations.In;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.tree.*;
@@ -18,22 +19,42 @@ import java.awt.event.*;
 import java.util.List;
 
 /**
- * @author yanzhao
- * @date 2022/1/26 14:47
- * @since 1.0.0
+ * 板块
  */
 public class ForumListPanel extends JPanel {
 
+    private Tree tree = new Tree();
+
     public ForumListPanel() {
         super();
+        tree.setPaintBusy(true);
         // 根节点
         DefaultMutableTreeNode top =
                 new DefaultMutableTreeNode("Forum list");
         createNodes(top);
-        Tree tree = new Tree(top);
+        tree = new Tree(top);
+        tree.setPaintBusy(false);
 
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        tree.setCellRenderer(new MyTreeCellRenderer());
+        tree.setCellRenderer(new ColoredTreeCellRenderer() {
+            @Override
+            public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+                Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
+                if (userObject instanceof Forum) {
+                    if(((Forum) userObject).getSublist() == null || ((Forum) userObject).getSublist().size() == 0) {
+                        // 子节点
+                        setIcon(AllIcons.FileTypes.Text);
+                    }else {
+                        // 根节点
+                        setIcon(AllIcons.Nodes.Folder);
+                    }
+                    append(((Forum) userObject).getName());
+                } else {
+                    setIcon(null);
+                    append(value.toString());
+                }
+            }
+        });
 
         // 节点监听
         MouseListener ml = new MouseAdapter() {
@@ -51,22 +72,11 @@ public class ForumListPanel extends JPanel {
                         }
                         Object nodeInfo = node.getUserObject();
                         Forum forum = (Forum) nodeInfo;
-                        Messages.showMessageDialog(forum.getDescription(), forum.getName(), Messages.getInformationIcon());
-
-                        String forumId = ((Forum) nodeInfo).getFid();
+//                        Messages.showMessageDialog(forum.getDescription(), forum.getName(), Messages.getInformationIcon());
+                        String forumId = forum.getFid();
                         if(StringUtil.isNotEmpty(forumId)) {
-                            DiscuzService discuzService = new DiscuzService();
-                            List<Thread> threadList = discuzService.getThreadList(Integer.valueOf(forumId), 1);
-
                             ThreadListUI threadListUI = ThreadListUI.getInstance();
-
-                            StringBuilder stringBuilder = new StringBuilder();
-                            for (Thread thread: threadList
-                                 ) {
-                                stringBuilder.append(thread.getSubject()).append("\n");
-                            }
-
-                            threadListUI.setPanelText(stringBuilder.toString());
+                            threadListUI.getThreadByForumId(Integer.parseInt(forumId));
                         }
 
                     }
@@ -105,34 +115,4 @@ public class ForumListPanel extends JPanel {
         }
     }
 
-    /**
-     * 自定义tree渲染方式
-     */
-    private static class MyTreeCellRenderer implements TreeCellRenderer {
-        private final JLabel label;
-
-        MyTreeCellRenderer() {
-            label = new JLabel();
-        }
-
-        @Override
-        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-            Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
-            if (userObject instanceof Forum) {
-
-                if(((Forum) userObject).getSublist() == null || ((Forum) userObject).getSublist().size() == 0) {
-                    // 子节点
-                    label.setIcon(AllIcons.FileTypes.Text);
-                }else {
-                    // 根节点
-                    label.setIcon(AllIcons.Nodes.Folder);
-                }
-                label.setText(((Forum) userObject).getName());
-            } else {
-                label.setIcon(null);
-                label.setText(value.toString());
-            }
-            return label;
-        }
-    }
 }
