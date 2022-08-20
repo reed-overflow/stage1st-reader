@@ -10,11 +10,14 @@ import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.JBTextArea;
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -29,6 +32,7 @@ public class ThreadPanel extends JPanel {
     private JBScrollPane threadScrollPane = new JBScrollPane(threadJBList);
 
     private JBTextArea textAreaPost = new JBTextArea();
+    private JBScrollPane postScrollPane = new JBScrollPane(textAreaPost);
 
     private final int DEFAULT_PAGE = 1;
     private int currentThreadPage = 1;
@@ -37,11 +41,7 @@ public class ThreadPanel extends JPanel {
     public ThreadPanel() {
         super();
         this.add(threadScrollPane);
-        this.add(textAreaPost);
-        // 页面布局
-        SpringLayout springLayout = new SpringLayout();
-        springLayout.putConstraint(SpringLayout.WEST, threadScrollPane, 0,SpringLayout.WEST, this);
-        springLayout.putConstraint(SpringLayout.WEST, textAreaPost, 0,SpringLayout.EAST, threadScrollPane);
+        this.add(postScrollPane);
 
         // 帖子列表布局
         threadJBList.setCellRenderer(new ColoredListCellRenderer() {
@@ -64,8 +64,11 @@ public class ThreadPanel extends JPanel {
             }
         };
         threadJBList.addMouseListener(ml);
-
-        this.setLayout(springLayout);
+        // 页面布局
+        BorderLayout borderLayout = new BorderLayout();
+        borderLayout.addLayoutComponent(threadScrollPane, BorderLayout.WEST);
+        borderLayout.addLayoutComponent(postScrollPane, BorderLayout.CENTER);
+        this.setLayout(borderLayout);
     }
 
     public void getThreadByForumId(int forumId) {
