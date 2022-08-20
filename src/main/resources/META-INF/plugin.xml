@@ -6,16 +6,6 @@
 
     <depends>com.intellij.modules.platform</depends>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.reedoverflow.stage1streader.services.MyApplicationService"/>
-        <projectService serviceImplementation="com.github.reedoverflow.stage1streader.services.MyProjectService"/>
-    </extensions>
-
-    <applicationListeners>
-        <listener class="com.github.reedoverflow.stage1streader.listeners.MyProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
-
     <!-- 可以配置侧边的工具栏，例如maven所在的侧边栏 -->
     <extensions defaultExtensionNs="com.intellij">
         <!-- 配置侧边工具栏，当且仅当第一次点击时，会初始化窗口类，anchor指定工具栏的位置 -->
