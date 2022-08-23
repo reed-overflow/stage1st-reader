@@ -15,7 +15,7 @@ public class ThreadWindowFactory implements ToolWindowFactory {
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         final ThreadListUI threadListUI = ThreadListUI.getInstance();
         final ContentFactory instance = ContentFactory.SERVICE.getInstance();
-        final Content content = instance.createContent(threadListUI.createComponent(), "Thread", false);
+        final Content content = instance.createContent(threadListUI.createComponent(), "Thread/Page", false);
         toolWindow.getContentManager().addContent(content);
     }
 }

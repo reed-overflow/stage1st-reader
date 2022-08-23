@@ -1,26 +1,23 @@
 package com.github.reedoverflow.stage1streader.ui.panel;
 
-import com.github.reedoverflow.stage1streader.domain.Forum;
+import com.github.reedoverflow.stage1streader.action.*;
 import com.github.reedoverflow.stage1streader.domain.Reply;
 import com.github.reedoverflow.stage1streader.domain.Thread;
 import com.github.reedoverflow.stage1streader.service.DiscuzService;
-import com.github.reedoverflow.stage1streader.ui.ThreadListUI;
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.JBTextArea;
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,27 +25,40 @@ import java.util.List;
  */
 public class ThreadPanel extends JPanel {
 
+    // 帖子列表
     private JBList threadJBList = new JBList();
-    private JBScrollPane threadScrollPane = new JBScrollPane(threadJBList);
-
+    // 回复列表
     private JBTextArea textAreaPost = new JBTextArea();
+    // 滚动条
+    private JBScrollPane threadScrollPane = new JBScrollPane(threadJBList);
     private JBScrollPane postScrollPane = new JBScrollPane(textAreaPost);
+
+    // 分页工具栏
+    private SimpleToolWindowPanel threadPanel;
 
     private final int DEFAULT_PAGE = 1;
     private int currentThreadPage = 1;
     private int currentPostPage = 1;
 
+    private int currentForum = 0;
+    private int currentThread = 0;
+    // 页码显示
+    private PureTextAction threadPageAction = new PureTextAction(currentThreadPage+"");
+    private PureTextAction postPageAction = new PureTextAction(currentPostPage+"");
+
+    private DiscuzService discuzService = new DiscuzService();
+
     public ThreadPanel() {
         super();
-        this.add(threadScrollPane);
-        this.add(postScrollPane);
 
         // 帖子列表布局
         threadJBList.setCellRenderer(new ColoredListCellRenderer() {
             @Override
             protected void customizeCellRenderer(@NotNull JList list, Object value, int index, boolean selected, boolean hasFocus) {
                 if(value instanceof Thread) {
-                    append(((Thread) value).getSubject());
+                    int totalPage = (int) Math.ceil(Double.parseDouble(((Thread) value).getReplies()) / 30);
+
+                    append(((Thread) value).getSubject()).append(" - ").append(totalPage+"");
                 }
             }
         });
@@ -63,43 +73,145 @@ public class ThreadPanel extends JPanel {
                 }
             }
         });
+
+        // 工具栏action
+        List<AnAction> actionList = new ArrayList<>();
+        // 帖子工具栏
+        actionList.add(threadPageAction);
+        actionList.add(new ThreadFirstPageAction(this));
+        actionList.add(new ThreadPrevPageAction(this));
+        actionList.add(new ThreadNextPageAction(this));
+        actionList.add(new Separator());
+        // 回复工具栏
+        actionList.add(postPageAction);
+        actionList.add(new PostFirstPageAction(this));
+        actionList.add(new PostPrevPageAction(this));
+        actionList.add(new PostNextPageAction(this));
+        DefaultActionGroup defaultActionGroup = new DefaultActionGroup(actionList);
+        // 设置工具栏
+        threadPanel = new SimpleToolWindowPanel(true);
+        ActionToolbar threadPageToolbar = ActionManager.getInstance() .createActionToolbar("Thread Tool Bar", defaultActionGroup, true);
+        threadPageToolbar.setTargetComponent(threadPanel.getComponent());
+        threadPanel.setContent(threadScrollPane);
+        threadPanel.setToolbar(threadPageToolbar.getComponent());
+
+        this.add(threadPanel);
+        this.add(postScrollPane);
+
         // 页面布局
         BorderLayout borderLayout = new BorderLayout();
-        borderLayout.addLayoutComponent(threadScrollPane, BorderLayout.WEST);
+        borderLayout.addLayoutComponent(threadPanel, BorderLayout.WEST);
         borderLayout.addLayoutComponent(postScrollPane, BorderLayout.CENTER);
         this.setLayout(borderLayout);
     }
 
+    /**
+     * 帖子列表初始化
+     * @param forumId
+     */
     public void getThreadByForumId(int forumId) {
         currentThreadPage = DEFAULT_PAGE;
         currentPostPage = DEFAULT_PAGE;
+        currentForum = forumId;
+        getAndSetThread(forumId, currentThreadPage);
+    }
+
+    public void getFirstPageThread() {
+        if(currentForum != 0) {
+            currentThreadPage = 1;
+            getAndSetThread(currentForum,currentThreadPage);
+        }
+    }
+
+    public void getNextPageThread() {
+        if(currentForum != 0) {
+            currentThreadPage = currentThreadPage + 1;
+            getAndSetThread(currentForum,currentThreadPage);
+        }
+    }
+
+    public void getPrevPageThread() {
+        if(currentForum != 0 && currentThreadPage > 1) {
+            currentThreadPage = currentThreadPage - 1;
+            getAndSetThread(currentForum,currentThreadPage);
+        }
+    }
+
+    /**
+     * 获取并显示帖子列表
+     * @param forumId
+     * @param page
+     */
+    private void getAndSetThread(int forumId, int page) {
         threadJBList.setPaintBusy(true);
-        DiscuzService discuzService = new DiscuzService();
-        List<Thread> threadList = discuzService.getThreadList(Integer.valueOf(forumId), currentThreadPage);
+        List<Thread> threadList = discuzService.getThreadList(forumId, page);
 
         DefaultListModel<Thread> defaultListModel = new DefaultListModel<>();
         for (Thread thread: threadList
-             ) {
+        ) {
             defaultListModel.addElement(thread);
         }
         threadJBList.setModel(defaultListModel);
 
         threadJBList.setPaintBusy(false);
-
         // 滚动条回到顶部
+        threadScrollPane.setViewportView(threadJBList);
         threadScrollPane.getVerticalScrollBar().setValue(0);
+        threadPageAction.setPage(page);
     }
 
+    /**
+     * 回复列表初始化
+     * @param threadId
+     */
     public void getPostByThreadId(int threadId) {
         currentPostPage = DEFAULT_PAGE;
+        currentThread = threadId;
+        getAndSetPost(currentThread, currentPostPage);
+    }
+
+    public void getFirstPagePost() {
+        if(currentThread != 0) {
+            currentPostPage = 1;
+            getAndSetPost(currentThread,currentPostPage);
+        }
+    }
+
+    public void getNextPagePost() {
+        if(currentThread != 0) {
+            currentPostPage = currentPostPage + 1;
+            getAndSetPost(currentThread,currentPostPage);
+        }
+    }
+
+    public void getPrevPagePost() {
+        if(currentThread != 0) {
+            currentPostPage = currentPostPage - 1;
+            getAndSetPost(currentThread,currentPostPage);
+        }
+    }
+
+    /**
+     * 获取并显示回复列表
+     * @param tId
+     * @param page
+     */
+    private void getAndSetPost(int tId, int page) {
         DiscuzService discuzService = new DiscuzService();
-        List<Reply> replyList = discuzService.getReplyList(threadId, currentPostPage);
+        List<Reply> replyList = discuzService.getReplyList(tId, currentPostPage);
 
         StringBuilder stringBuilder = new StringBuilder();
+
         for (Reply reply: replyList
-             ) {
+        ) {
             stringBuilder.append("----------------------------\n");
-            stringBuilder.append(reply.getAuthor()).append("    ").append(reply.getDateline()).append("\n");
+            stringBuilder.append(reply.getAuthor())
+                    .append("    ")
+                    .append(reply.getDateline())
+                    .append("    ")
+                    .append(reply.getPosition())
+                    .append("L")
+                    .append("\n");
             stringBuilder.append(reply.getMessage()).append("\n");
         }
         textAreaPost.setText(stringBuilder.toString());
@@ -108,5 +220,6 @@ public class ThreadPanel extends JPanel {
         textAreaPost.setSelectionStart(0);
         textAreaPost.setSelectionEnd(0);
         postScrollPane.getVerticalScrollBar().setValue(postScrollPane.getVerticalScrollBar().getMaximum());
+        postPageAction.setPage(page);
     }
 }

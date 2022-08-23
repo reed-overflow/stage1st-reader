@@ -28,26 +28,7 @@ public class ForumListPanel extends JPanel {
         super();
         tree.setPaintBusy(true);
         createForumTree();
-    }
 
-    /**
-     * treeNode 节点设置
-     */
-    public void createForumTree() {
-        top = new DefaultMutableTreeNode("Forum list");
-        DiscuzService discuzService = new DiscuzService();
-        List<Forum> forumList = discuzService.getForumList();
-
-        DefaultMutableTreeNode node = null;
-        for (Forum forum: forumList
-             ) {
-            node = new DefaultMutableTreeNode(forum);
-            setUpChildren(node, forum);
-            top.add(node);
-        }
-
-        tree = new Tree(top);
-        tree.setPaintBusy(false);
         // tree渲染
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         tree.setCellRenderer(new ColoredTreeCellRenderer() {
@@ -97,7 +78,29 @@ public class ForumListPanel extends JPanel {
             }
         };
         tree.addMouseListener(ml);
+
         this.add(tree);
+
+    }
+
+    /**
+     * treeNode 节点设置
+     */
+    public void createForumTree() {
+        top = new DefaultMutableTreeNode("Forum list");
+        DiscuzService discuzService = new DiscuzService();
+        List<Forum> forumList = discuzService.getForumList();
+
+        DefaultMutableTreeNode node = null;
+        for (Forum forum: forumList
+             ) {
+            node = new DefaultMutableTreeNode(forum);
+            setUpChildren(node, forum);
+            top.add(node);
+        }
+
+        tree = new Tree(top);
+        tree.setPaintBusy(false);
     }
 
     /**
