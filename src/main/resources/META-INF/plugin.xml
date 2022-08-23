@@ -17,19 +17,5 @@
                     anchor="bottom" icon="AllIcons.Nodes.Folder">
         </toolWindow>
     </extensions>
-
-    <!-- 配置动作(事件），每次点击都会重新初始化 -->
-    <actions>
-        <action id="HelloWorld-project" class="com.github.reedoverflow.stage1streader.action.ProjectViewPopupAction"
-                text="Hello world - demo" description="Hello world">
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
-        </action>
-        <action id="HelloWorld-editor" class="com.github.reedoverflow.stage1streader.action.EditorPopupAction"
-                text="Hello world - demo"
-                description="Hello world">
-            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-        </action>
-    </actions>
-
-
+    
 </idea-plugin>

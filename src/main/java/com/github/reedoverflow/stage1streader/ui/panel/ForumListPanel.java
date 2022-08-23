@@ -1,20 +1,16 @@
 package com.github.reedoverflow.stage1streader.ui.panel;
 
 import com.github.reedoverflow.stage1streader.domain.Forum;
-import com.github.reedoverflow.stage1streader.domain.Thread;
 import com.github.reedoverflow.stage1streader.service.DiscuzService;
 import com.github.reedoverflow.stage1streader.ui.ThreadListUI;
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.treeStructure.Tree;
-import jnr.ffi.annotations.In;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.tree.*;
-import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 
@@ -25,12 +21,31 @@ public class ForumListPanel extends JPanel {
 
     private Tree tree = new Tree();
 
+    // 根节点
+    private DefaultMutableTreeNode top = new DefaultMutableTreeNode("Forum list");
+
     public ForumListPanel() {
         super();
         tree.setPaintBusy(true);
-        // 根节点
-        DefaultMutableTreeNode top = new DefaultMutableTreeNode("Forum list");
-        createNodes(top);
+        createForumTree();
+    }
+
+    /**
+     * treeNode 节点设置
+     */
+    public void createForumTree() {
+        top = new DefaultMutableTreeNode("Forum list");
+        DiscuzService discuzService = new DiscuzService();
+        List<Forum> forumList = discuzService.getForumList();
+
+        DefaultMutableTreeNode node = null;
+        for (Forum forum: forumList
+             ) {
+            node = new DefaultMutableTreeNode(forum);
+            setUpChildren(node, forum);
+            top.add(node);
+        }
+
         tree = new Tree(top);
         tree.setPaintBusy(false);
         // tree渲染
@@ -83,23 +98,6 @@ public class ForumListPanel extends JPanel {
         };
         tree.addMouseListener(ml);
         this.add(tree);
-    }
-
-    /**
-     * treeNode 节点设置
-     * @param top
-     */
-    private void createNodes(DefaultMutableTreeNode top) {
-        DiscuzService discuzService = new DiscuzService();
-        List<Forum> forumList = discuzService.getForumList();
-
-        DefaultMutableTreeNode node = null;
-        for (Forum forum: forumList
-             ) {
-            node = new DefaultMutableTreeNode(forum);
-            setUpChildren(node, forum);
-            top.add(node);
-        }
     }
 
     /**
