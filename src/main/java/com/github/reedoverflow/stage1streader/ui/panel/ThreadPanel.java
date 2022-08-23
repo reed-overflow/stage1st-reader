@@ -39,12 +39,13 @@ public class ThreadPanel extends JPanel {
     private final int DEFAULT_PAGE = 1;
     private int currentThreadPage = 1;
     private int currentPostPage = 1;
+    private int currentPostMaxPage = 1;
 
     private int currentForum = 0;
     private int currentThread = 0;
     // 页码显示
     private PureTextAction threadPageAction = new PureTextAction(currentThreadPage+"");
-    private PureTextAction postPageAction = new PureTextAction(currentPostPage+"");
+    private PureTextAction postPageAction = new PureTextAction(currentPostPage+"/"+currentPostMaxPage);
 
     private DiscuzService discuzService = new DiscuzService();
 
@@ -57,7 +58,6 @@ public class ThreadPanel extends JPanel {
             protected void customizeCellRenderer(@NotNull JList list, Object value, int index, boolean selected, boolean hasFocus) {
                 if(value instanceof Thread) {
                     int totalPage = (int) Math.ceil(Double.parseDouble(((Thread) value).getReplies()) / 30);
-
                     append(((Thread) value).getSubject()).append(" - ").append(totalPage+"");
                 }
             }
@@ -65,8 +65,10 @@ public class ThreadPanel extends JPanel {
         threadJBList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 Object object = threadJBList.getSelectedValue();
-                if(object != null && object instanceof Thread) {
+                if(object instanceof Thread) {
                     String tid = ((Thread) object).getTid();
+                    int totalPage = (int) Math.ceil(Double.parseDouble(((Thread) object).getReplies()) / 30);
+                    currentPostMaxPage = totalPage;
                     if(StringUtil.isNotEmpty(tid)) {
                         getPostByThreadId(Integer.parseInt(tid));
                     }
@@ -77,16 +79,17 @@ public class ThreadPanel extends JPanel {
         // 工具栏action
         List<AnAction> actionList = new ArrayList<>();
         // 帖子工具栏
-        actionList.add(threadPageAction);
         actionList.add(new ThreadFirstPageAction(this));
         actionList.add(new ThreadPrevPageAction(this));
+        actionList.add(threadPageAction);
         actionList.add(new ThreadNextPageAction(this));
         actionList.add(new Separator());
         // 回复工具栏
-        actionList.add(postPageAction);
         actionList.add(new PostFirstPageAction(this));
         actionList.add(new PostPrevPageAction(this));
+        actionList.add(postPageAction);
         actionList.add(new PostNextPageAction(this));
+        actionList.add(new PostLastPageAction(this));
         DefaultActionGroup defaultActionGroup = new DefaultActionGroup(actionList);
         // 设置工具栏
         threadPanel = new SimpleToolWindowPanel(true);
@@ -177,6 +180,13 @@ public class ThreadPanel extends JPanel {
         }
     }
 
+    public void getLastPagePost() {
+        if(currentThread != 0) {
+            currentPostPage = currentPostMaxPage;
+            getAndSetPost(currentThread,currentPostPage);
+        }
+    }
+
     public void getNextPagePost() {
         if(currentThread != 0) {
             currentPostPage = currentPostPage + 1;
@@ -220,6 +230,6 @@ public class ThreadPanel extends JPanel {
         textAreaPost.setSelectionStart(0);
         textAreaPost.setSelectionEnd(0);
         postScrollPane.getVerticalScrollBar().setValue(postScrollPane.getVerticalScrollBar().getMaximum());
-        postPageAction.setPage(page);
+        postPageAction.setPage(page,+currentPostMaxPage);
     }
 }

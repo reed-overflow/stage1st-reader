@@ -25,6 +25,10 @@ public class PureTextAction extends AnAction implements CustomComponentAction {
         show.setText(page+"");
     }
 
+    public void setPage(int page,int maxPage) {
+        show.setText(page+"/"+maxPage);
+    }
+
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
     }
