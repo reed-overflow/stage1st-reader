@@ -35,11 +35,11 @@ public class ThreadPanel extends JPanel {
 
     // 分页工具栏
     private SimpleToolWindowPanel threadPanel;
-
+    // 页码
     private final int DEFAULT_PAGE = 1;
-    private int currentThreadPage = 1;
-    private int currentPostPage = 1;
-    private int currentPostMaxPage = 1;
+    private int currentThreadPage = DEFAULT_PAGE;
+    private int currentPostPage = DEFAULT_PAGE;
+    private int currentPostMaxPage = DEFAULT_PAGE;
 
     private int currentForum = 0;
     private int currentThread = 0;
@@ -119,27 +119,6 @@ public class ThreadPanel extends JPanel {
         getAndSetThread(forumId, currentThreadPage);
     }
 
-    public void getFirstPageThread() {
-        if(currentForum != 0) {
-            currentThreadPage = 1;
-            getAndSetThread(currentForum,currentThreadPage);
-        }
-    }
-
-    public void getNextPageThread() {
-        if(currentForum != 0) {
-            currentThreadPage = currentThreadPage + 1;
-            getAndSetThread(currentForum,currentThreadPage);
-        }
-    }
-
-    public void getPrevPageThread() {
-        if(currentForum != 0 && currentThreadPage > 1) {
-            currentThreadPage = currentThreadPage - 1;
-            getAndSetThread(currentForum,currentThreadPage);
-        }
-    }
-
     /**
      * 获取并显示帖子列表
      * @param forumId
@@ -173,34 +152,6 @@ public class ThreadPanel extends JPanel {
         getAndSetPost(currentThread, currentPostPage);
     }
 
-    public void getFirstPagePost() {
-        if(currentThread != 0) {
-            currentPostPage = 1;
-            getAndSetPost(currentThread,currentPostPage);
-        }
-    }
-
-    public void getLastPagePost() {
-        if(currentThread != 0) {
-            currentPostPage = currentPostMaxPage;
-            getAndSetPost(currentThread,currentPostPage);
-        }
-    }
-
-    public void getNextPagePost() {
-        if(currentThread != 0) {
-            currentPostPage = currentPostPage + 1;
-            getAndSetPost(currentThread,currentPostPage);
-        }
-    }
-
-    public void getPrevPagePost() {
-        if(currentThread != 0) {
-            currentPostPage = currentPostPage - 1;
-            getAndSetPost(currentThread,currentPostPage);
-        }
-    }
-
     /**
      * 获取并显示回复列表
      * @param tId
@@ -231,5 +182,54 @@ public class ThreadPanel extends JPanel {
         textAreaPost.setSelectionEnd(0);
         postScrollPane.getVerticalScrollBar().setValue(postScrollPane.getVerticalScrollBar().getMaximum());
         postPageAction.setPage(page,+currentPostMaxPage);
+    }
+    // 帖子列表页码控制
+    public void getFirstPageThread() {
+        if(currentForum != 0) {
+            currentThreadPage = 1;
+            getAndSetThread(currentForum,currentThreadPage);
+        }
+    }
+
+    public void getNextPageThread() {
+        if(currentForum != 0) {
+            currentThreadPage = currentThreadPage + 1;
+            getAndSetThread(currentForum,currentThreadPage);
+        }
+    }
+
+    public void getPrevPageThread() {
+        if(currentForum != 0 && currentThreadPage > 1) {
+            currentThreadPage = currentThreadPage - 1;
+            getAndSetThread(currentForum,currentThreadPage);
+        }
+    }
+    // 回复页码控制
+    public void getFirstPagePost() {
+        if(currentThread != 0) {
+            currentPostPage = 1;
+            getAndSetPost(currentThread,currentPostPage);
+        }
+    }
+
+    public void getLastPagePost() {
+        if(currentThread != 0) {
+            currentPostPage = currentPostMaxPage;
+            getAndSetPost(currentThread,currentPostPage);
+        }
+    }
+
+    public void getNextPagePost() {
+        if(currentThread != 0) {
+            currentPostPage = currentPostPage + 1;
+            getAndSetPost(currentThread,currentPostPage);
+        }
+    }
+
+    public void getPrevPagePost() {
+        if(currentThread != 0) {
+            currentPostPage = currentPostPage - 1;
+            getAndSetPost(currentThread,currentPostPage);
+        }
     }
 }
