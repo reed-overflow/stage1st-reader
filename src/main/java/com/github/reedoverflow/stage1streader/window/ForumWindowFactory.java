@@ -14,7 +14,7 @@ public class ForumWindowFactory implements ToolWindowFactory {
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         final ForumListUI forumListUI = ForumListUI.getInstance();
         final ContentFactory instance = ContentFactory.SERVICE.getInstance();
-        final Content content = instance.createContent(forumListUI.createComponent(), "Saraba", false);
+        final Content content = instance.createContent(forumListUI.createComponent(), "Obey or Die", false);
         toolWindow.getContentManager().addContent(content);
     }
 }
