@@ -16,7 +16,7 @@ public class PostPrevPageAction extends AnAction {
         Presentation presentation = getTemplatePresentation();
         presentation.setText("Previous Page");
         presentation.setDescription("Post previous page");
-        presentation.setIcon(AllIcons.Actions.ArrowCollapse);
+        presentation.setIcon(AllIcons.Actions.Back);
         this.threadPanel = threadPanel;
     }
 

@@ -23,7 +23,8 @@ public class DiscuzService {
         List<Forum> forumList = new ArrayList<>();
         try {
             String result = HTTPUtil.doGet(requestUrl);
-            JsonObject jsonResult = (JsonObject) JsonParser.parseString(result);
+            JsonParser parser = new JsonParser();
+            JsonObject jsonResult = (JsonObject) parser.parse(result);
             JsonArray formArray = jsonResult.getAsJsonObject("Variables").getAsJsonArray("forumlist");
 
             Iterator it = formArray.iterator();
@@ -50,7 +51,8 @@ public class DiscuzService {
 
         try {
             String result = HTTPUtil.doGet(requestUrl);
-            JsonObject jsonResult = (JsonObject) JsonParser.parseString(result);
+            JsonParser parser = new JsonParser();
+            JsonObject jsonResult = (JsonObject) parser.parse(result);
             JsonArray formArray = jsonResult.getAsJsonObject("Variables").getAsJsonArray("forum_threadlist");
 
             Iterator it = formArray.iterator();
@@ -77,7 +79,8 @@ public class DiscuzService {
 
         try {
             String result = HTTPUtil.doGet(requestUrl);
-            JsonObject jsonResult = (JsonObject) JsonParser.parseString(result);
+            JsonParser parser = new JsonParser();
+            JsonObject jsonResult = (JsonObject) parser.parse(result);
             JsonArray formArray = jsonResult.getAsJsonObject("Variables").getAsJsonArray("postlist");
 
             Iterator it = formArray.iterator();

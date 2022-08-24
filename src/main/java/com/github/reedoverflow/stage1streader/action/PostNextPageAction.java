@@ -16,7 +16,7 @@ public class PostNextPageAction extends AnAction {
         Presentation presentation = getTemplatePresentation();
         presentation.setText("Next Page");
         presentation.setDescription("Post next page");
-        presentation.setIcon(AllIcons.Actions.ArrowExpand);
+        presentation.setIcon(AllIcons.Actions.Forward);
         this.threadPanel = threadPanel;
     }
 

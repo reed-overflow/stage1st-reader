@@ -16,7 +16,7 @@ public class ThreadNextPageAction extends AnAction {
         Presentation presentation = getTemplatePresentation();
         presentation.setText("Next Page");
         presentation.setDescription("Thread next page");
-        presentation.setIcon(AllIcons.Actions.ArrowExpand);
+        presentation.setIcon(AllIcons.Actions.Forward);
         this.threadPanel = threadPanel;
     }
 
