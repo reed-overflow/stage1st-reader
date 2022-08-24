@@ -1,8 +1,8 @@
 # stage1st-reader
 
 ![Build](https://github.com/reed-overflow/stage1st-reader/workflows/Build/badge.svg)
-[![Version](https://img.shields.io/jetbrains/plugin/v/19768-stage1st-reader.svg)](https://img.shields.io/jetbrains/plugin/v/19768-stage1st-reader.svg)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/19768-stage1st-reader.svg)](https://img.shields.io/jetbrains/plugin/d/19768-stage1st-reader.svg)
+[![Version](https://img.shields.io/jetbrains/plugin/v/19768-stage1st-reader.svg)](https://plugins.jetbrains.com/plugin/19768-stage1st-reader)
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/19768-stage1st-reader.svg)](https://plugins.jetbrains.com/plugin/19768-stage1st-reader)
 
 
 <!-- Plugin description -->
