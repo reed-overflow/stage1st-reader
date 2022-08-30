@@ -19,6 +19,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 帖子
@@ -173,9 +175,18 @@ public class ThreadPanel extends JPanel {
                     .append(reply.getPosition())
                     .append("L")
                     .append("\n");
-            stringBuilder.append(reply.getMessage()).append("\n");
+            String message = reply.getMessage();
+            //去除所有 html 标签，包括表情图片链接。目前没啥好方法显示表情所以去除
+            message = message.replaceAll("<.*?>", "");
+            //将多个换行符合并成一个
+            Pattern p = Pattern.compile("(\r?\n(\\s*\r?\n)+)");
+            Matcher m = p.matcher(message);
+            message = m.replaceAll("\n");
+            stringBuilder.append(message).append("\n");
         }
         textAreaPost.setText(stringBuilder.toString());
+        //文字自动换行
+        textAreaPost.setLineWrap(Boolean.TRUE);
 
         // 滚动条回到顶部
         textAreaPost.setSelectionStart(0);
