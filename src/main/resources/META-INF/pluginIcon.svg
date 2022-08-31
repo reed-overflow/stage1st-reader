@@ -1,1 +1,9 @@
-<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="40" height="40"><defs><image  width="400" height="400" id="img1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAGQAQMAAAC6caSPAAAAAXNSR0IB2cksfwAAAANQTFRFAAAAp3o92gAAAAF0Uk5TAEDm2GYAAAAqSURBVHic7cExAQAAAMKg9U/tbwagAAAAAAAAAAAAAAAAAAAAAAAAAIA3T7AAATkWl3gAAAAASUVORK5CYII="/></defs><style>.a{fill:#cc6;stroke:#000}</style><use  href="#img1" x="0" y="0"/><path  d="m199.5 370c-94.3 0-170.5-76.2-170.5-170.5 0-94.3 76.2-170.5 170.5-170.5 94.3 0 170.5 76.2 170.5 170.5 0 94.3-76.2 170.5-170.5 170.5z"/><path class="a" d="m177 12h45v381h-45z"/></svg>
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+	<title>pluginIcon-svg</title>
+	<style>
+		.s0 { fill: #000000;stroke: #cccc66;stroke-width: .1 } 
+		.s1 { fill: #cccc66;stroke: #000000;stroke-width: .1 } 
+	</style>
+	<path id="Layer" class="s0" d="m19.9 37c-9.4 0-17-7.6-17-17.1 0-9.4 7.6-17 17.1-17 9.4 0 17 7.6 17 17.1 0 9.4-7.6 17-17.1 17z"/>
+	<path id="Layer" class="s1" d="m17.7 1.2h4.5v38.1h-4.5z"/>
+</svg>
