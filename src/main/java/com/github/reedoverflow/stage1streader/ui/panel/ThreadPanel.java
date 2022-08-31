@@ -93,6 +93,7 @@ public class ThreadPanel extends JPanel {
         DefaultActionGroup defaultActionGroup = new DefaultActionGroup(actionList);
         // 设置工具栏
         threadPanel = new SimpleToolWindowPanel(true);
+        threadJBList.setFixedCellWidth(100);
         ActionToolbar threadPageToolbar = ActionManager.getInstance() .createActionToolbar("Thread Tool Bar", defaultActionGroup, true);
         threadPageToolbar.setTargetComponent(threadPanel.getComponent());
         threadPanel.setContent(threadScrollPane);
