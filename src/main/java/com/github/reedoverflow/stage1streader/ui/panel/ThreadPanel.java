@@ -173,9 +173,18 @@ public class ThreadPanel extends JPanel {
                     .append(reply.getPosition())
                     .append("L")
                     .append("\n");
-            stringBuilder.append(reply.getMessage()).append("\n");
+            String message = reply.getMessage();
+            //去除所有 html 标签，包括表情图片链接。目前没啥好方法显示表情所以去除
+            message = message.replaceAll("<.*?>", "");
+            //将多个换行符合并成一个
+            message = message.replaceAll("(\r?\n(\\s*\r?\n)+)","\n");
+            stringBuilder.append(message).append("\n");
         }
         textAreaPost.setText(stringBuilder.toString());
+        //文字自动换行
+        textAreaPost.setLineWrap(Boolean.TRUE);
+        //字体设置为主界面字体
+        textAreaPost.setFont(super.getFont());
 
         // 滚动条回到顶部
         textAreaPost.setSelectionStart(0);
