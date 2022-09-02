@@ -2,17 +2,26 @@
 <idea-plugin>
     <id>com.github.reedoverflow.stage1streader</id>
     <name>stage1st-reader</name>
+    <version>0.0.33</version>
     <vendor>reed-overflow</vendor>
-
+    <idea-version since-build="191"/>
     <depends>com.intellij.modules.platform</depends>
 
-    <!-- 可以配置侧边的工具栏，例如maven所在的侧边栏 -->
+
+    <description>
+        <![CDATA[
+        <a href="https://github.com/reed-overflow/stage1st-reader">Plugin homepage</a>
+        A plugin that allows you to access <a href="http://bbs.saraba1st.com/2b/">stage1st</a> , one of the biggest BBS in China.
+        ]]>
+    </description>
+
+    <!-- 工具栏 -->
     <extensions defaultExtensionNs="com.intellij">
-        <!-- 配置侧边工具栏，当且仅当第一次点击时，会初始化窗口类，anchor指定工具栏的位置 -->
+        <!-- Forum工具栏 -->
         <toolWindow id="S1 Selector" factoryClass="com.github.reedoverflow.stage1streader.window.ForumWindowFactory" secondary="false"
                     anchor="left" icon="AllIcons.Debugger.Db_watch">
         </toolWindow>
-
+        <!-- Thread工具栏 -->
         <toolWindow id="S1 Reader" factoryClass="com.github.reedoverflow.stage1streader.window.ThreadWindowFactory" secondary="false"
                     anchor="bottom" icon="AllIcons.Nodes.Folder">
         </toolWindow>
