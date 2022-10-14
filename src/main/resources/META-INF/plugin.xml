@@ -2,7 +2,7 @@
 <idea-plugin>
     <id>com.github.reedoverflow.stage1streader</id>
     <name>stage1st-reader</name>
-    <version>0.0.33</version>
+    <version>0.0.35</version>
     <vendor>reed-overflow</vendor>
     <idea-version since-build="191"/>
     <depends>com.intellij.modules.platform</depends>
