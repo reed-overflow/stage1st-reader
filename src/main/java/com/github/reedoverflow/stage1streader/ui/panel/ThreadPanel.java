@@ -127,20 +127,39 @@ public class ThreadPanel extends JPanel {
      */
     private void getAndSetThread(int forumId, int page) {
         threadJBList.setPaintBusy(true);
-        List<Thread> threadList = discuzService.getThreadList(forumId, page);
-
-        DefaultListModel<Thread> defaultListModel = new DefaultListModel<>();
-        for (Thread thread: threadList
-        ) {
-            defaultListModel.addElement(thread);
-        }
-        threadJBList.setModel(defaultListModel);
-
-        threadJBList.setPaintBusy(false);
         // 滚动条回到顶部
         threadScrollPane.setViewportView(threadJBList);
         threadScrollPane.getVerticalScrollBar().setValue(0);
         threadPageAction.setPage(page);
+
+        SwingWorker threadWorker = new SwingWorker() {
+            List<Thread> threadList = new ArrayList<>();
+            @Override
+            protected Object doInBackground() throws Exception {
+                // 获取列表
+                threadList = discuzService.getThreadList(forumId, page);
+                return threadList;
+            }
+
+            @Override
+            protected void done() {
+                super.done();
+                // 封装渲染
+                DefaultListModel<Thread> defaultListModel = new DefaultListModel<>();
+                for (Thread thread: threadList
+                ) {
+                    defaultListModel.addElement(thread);
+                }
+                threadJBList.setModel(defaultListModel);
+
+                threadJBList.setPaintBusy(false);
+                // 滚动条回到顶部
+                threadScrollPane.setViewportView(threadJBList);
+                threadScrollPane.getVerticalScrollBar().setValue(0);
+                threadPageAction.setPage(page);
+            }
+        };
+        threadWorker.execute();
     }
 
     /**
@@ -159,39 +178,57 @@ public class ThreadPanel extends JPanel {
      * @param page
      */
     private void getAndSetPost(int tId, int page) {
-        DiscuzService discuzService = new DiscuzService();
-        List<Reply> replyList = discuzService.getReplyList(tId, currentPostPage);
-
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for (Reply reply: replyList
-        ) {
-            stringBuilder.append("----------------------------\n");
-            stringBuilder.append(reply.getAuthor())
-                    .append("    ")
-                    .append(reply.getDateline())
-                    .append("    ")
-                    .append(reply.getPosition())
-                    .append("L")
-                    .append("\n");
-            String message = reply.getMessage();
-            //去除所有 html 标签，包括表情图片链接。目前没啥好方法显示表情所以去除
-            message = message.replaceAll("<.*?>", "");
-            //将多个换行符合并成一个
-            message = message.replaceAll("(\r?\n(\\s*\r?\n)+)","\n");
-            stringBuilder.append(message).append("\n");
-        }
-        textAreaPost.setText(stringBuilder.toString());
         //文字自动换行
         textAreaPost.setLineWrap(Boolean.TRUE);
         //字体设置为主界面字体
         textAreaPost.setFont(super.getFont());
-
         // 滚动条回到顶部
         textAreaPost.setSelectionStart(0);
         textAreaPost.setSelectionEnd(0);
         postScrollPane.getVerticalScrollBar().setValue(postScrollPane.getVerticalScrollBar().getMaximum());
         postPageAction.setPage(page,+currentPostMaxPage);
+        SwingWorker postWorker = new SwingWorker() {
+            List<Reply> replyList = new ArrayList<>();
+            @Override
+            protected Object doInBackground() throws Exception {
+                // 获取列表
+                DiscuzService discuzService = new DiscuzService();
+                replyList = discuzService.getReplyList(tId, currentPostPage);
+                return replyList;
+            }
+
+            @Override
+            protected void done() {
+                super.done();
+                // 封装渲染
+                StringBuilder stringBuilder = new StringBuilder();
+
+                for (Reply reply: replyList
+                ) {
+                    stringBuilder.append("----------------------------\n");
+                    stringBuilder.append(reply.getAuthor())
+                            .append("    ")
+                            .append(reply.getDateline())
+                            .append("    ")
+                            .append(reply.getPosition())
+                            .append("L")
+                            .append("\n");
+                    String message = reply.getMessage();
+                    //去除所有 html 标签，包括表情图片链接。目前没啥好方法显示表情所以去除
+                    message = message.replaceAll("<.*?>", "");
+                    //将多个换行符合并成一个
+                    message = message.replaceAll("(\r?\n(\\s*\r?\n)+)","\n");
+                    stringBuilder.append(message).append("\n");
+                }
+                textAreaPost.setText(stringBuilder.toString());
+                // 滚动条回到顶部
+                textAreaPost.setSelectionStart(0);
+                textAreaPost.setSelectionEnd(0);
+                postScrollPane.getVerticalScrollBar().setValue(postScrollPane.getVerticalScrollBar().getMaximum());
+                postPageAction.setPage(page,+currentPostMaxPage);
+            }
+        };
+        postWorker.execute();
     }
     // 帖子列表页码控制
     public void getFirstPageThread() {
