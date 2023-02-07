@@ -3,6 +3,7 @@ package com.github.reedoverflow.stage1streader.ui;
 import com.github.reedoverflow.stage1streader.action.ForumRefreshAction;
 import com.github.reedoverflow.stage1streader.ui.panel.ForumListPanel;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 
 import javax.swing.*;
@@ -17,17 +18,17 @@ import java.util.List;
  */
 public class ForumListUI {
 
-    private static ForumListUI instance;
+//    private static ForumListUI instance;
 
     private SimpleToolWindowPanel toolbarPanel;
 
-    static {
-        instance = new ForumListUI();
-    }
+//    static {
+//        instance = new ForumListUI();
+//    }
 
-    private ForumListUI() {
+    public ForumListUI(Project project) {
         // 板块列表panel
-        ForumListPanel forumListPanel = new ForumListPanel();
+        ForumListPanel forumListPanel = new ForumListPanel(project);
         forumListPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         // 工具栏action
         List<AnAction> actionList = new ArrayList<>();
@@ -41,9 +42,9 @@ public class ForumListUI {
         toolbarPanel.setToolbar(toolBar.getComponent());
     }
 
-    public static ForumListUI getInstance() {
-        return instance;
-    }
+//    public static ForumListUI getInstance() {
+//        return instance;
+//    }
 
     public JComponent createComponent() {
         return toolbarPanel;

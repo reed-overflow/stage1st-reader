@@ -4,7 +4,9 @@ import com.github.reedoverflow.stage1streader.domain.Forum;
 import com.github.reedoverflow.stage1streader.domain.Thread;
 import com.github.reedoverflow.stage1streader.service.DiscuzService;
 import com.github.reedoverflow.stage1streader.ui.ThreadListUI;
+import com.github.reedoverflow.stage1streader.ui.ThreadListUIProjectMap;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.treeStructure.Tree;
@@ -21,13 +23,15 @@ import java.util.List;
  */
 public class ForumListPanel extends JPanel {
 
+    private Project project;
     private Tree tree = new Tree();
 
     // 根节点
     private DefaultMutableTreeNode top = new DefaultMutableTreeNode("Forum list");
 
-    public ForumListPanel() {
+    public ForumListPanel(Project project) {
         super();
+        this.project = project;
         createForumTree();
         this.add(tree);
     }
@@ -104,7 +108,8 @@ public class ForumListPanel extends JPanel {
 //                        Messages.showMessageDialog(forum.getDescription(), forum.getName(), Messages.getInformationIcon());
                                 String forumId = forum.getFid();
                                 if(StringUtil.isNotEmpty(forumId)) {
-                                    ThreadListUI threadListUI = ThreadListUI.getInstance();
+                                    ThreadListUIProjectMap map = ThreadListUIProjectMap.getInstance();
+                                    ThreadListUI threadListUI = map.getThreadListUIByProject(project);
                                     threadListUI.getThreadByForumId(Integer.parseInt(forumId));
                                 }
 
