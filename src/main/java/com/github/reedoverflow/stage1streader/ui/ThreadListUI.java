@@ -13,12 +13,17 @@ public class ThreadListUI {
         instance = new ThreadListUI();
     }
 
-    private ThreadListUI() {
-        mainPanel = new ThreadPanel();
-    }
+//    private ThreadListUI() {
+//        mainPanel = new ThreadPanel();
+//    }
 
-    public static ThreadListUI getInstance() {
-        return instance;
+//    public static ThreadListUI getInstance() {
+////        return instance;
+//        return new ThreadListUI();
+//    }
+
+    public ThreadListUI() {
+        mainPanel = new ThreadPanel();
     }
 
     public JComponent createComponent() {

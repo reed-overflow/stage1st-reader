@@ -12,9 +12,9 @@ public class ForumWindowFactory implements ToolWindowFactory {
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-        final ForumListUI forumListUI = ForumListUI.getInstance();
-        final ContentFactory instance = ContentFactory.SERVICE.getInstance();
-        final Content content = instance.createContent(forumListUI.createComponent(), "Obey or Die", false);
+        ForumListUI forumListUI = new ForumListUI(project);
+        ContentFactory instance = ContentFactory.SERVICE.getInstance();
+        Content content = instance.createContent(forumListUI.createComponent(), "Obey or Die", false);
         toolWindow.getContentManager().addContent(content);
     }
 }
