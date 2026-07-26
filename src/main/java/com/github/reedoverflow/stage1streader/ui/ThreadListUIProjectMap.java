@@ -1,35 +1,31 @@
 package com.github.reedoverflow.stage1streader.ui;
 
-import com.github.reedoverflow.stage1streader.ui.panel.ThreadPanel;
 import com.intellij.openapi.project.Project;
-import cucumber.api.java.it.Ma;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
+/**
+ * Keeps one thread reader per open project without retaining closed projects.
+ */
 public class ThreadListUIProjectMap {
-    private static ThreadListUIProjectMap instance;
 
-    private Map<Integer, ThreadListUI> map;
+    private static final ThreadListUIProjectMap INSTANCE = new ThreadListUIProjectMap();
 
-    static {
-        instance = new ThreadListUIProjectMap();
-    }
+    private final Map<Project, ThreadListUI> map = new WeakHashMap<>();
 
     private ThreadListUIProjectMap() {
-        map = new HashMap<>();
     }
 
     public static ThreadListUIProjectMap getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
-    public ThreadListUI getThreadListUIByProject(Project project) {
-        Integer code = project.hashCode();
-        ThreadListUI threadListUI = map.get(code);
-        if(threadListUI == null) {
+    public synchronized ThreadListUI getThreadListUIByProject(Project project) {
+        ThreadListUI threadListUI = map.get(project);
+        if (threadListUI == null) {
             threadListUI = new ThreadListUI();
-            map.put(code, threadListUI);
+            map.put(project, threadListUI);
         }
         return threadListUI;
     }

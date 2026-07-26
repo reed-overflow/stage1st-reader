@@ -17,6 +17,12 @@
 
     <!-- 工具栏 -->
     <extensions defaultExtensionNs="com.intellij">
+        <applicationService serviceImplementation="com.github.reedoverflow.stage1streader.constant.Config"/>
+        <applicationConfigurable id="com.github.reedoverflow.stage1streader.settings"
+                                 displayName="Stage1st Reader"
+                                 parentId="tools"
+                                 instance="com.github.reedoverflow.stage1streader.settings.Stage1stReaderConfigurable"/>
+
         <!-- Forum工具栏 -->
         <toolWindow id="S1 Selector" factoryClass="com.github.reedoverflow.stage1streader.window.ForumWindowFactory" secondary="false"
                     anchor="left" icon="AllIcons.Debugger.Db_watch">

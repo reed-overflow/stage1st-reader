@@ -6,7 +6,7 @@
 
 
 <!-- Plugin description -->
-A plugin that allows you to access http://bbs.saraba1st.com/2b/ , one of the biggest BBS in China.
+A plugin that allows you to access https://stage1st.com/2b/ , one of the biggest BBS in China.
 <!-- Plugin description end -->
 
 ## Installation
@@ -21,6 +21,12 @@ A plugin that allows you to access http://bbs.saraba1st.com/2b/ , one of the big
   Download the [latest release](https://github.com/reed-overflow/stage1st-reader/releases/latest) and install it manually using
   <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
 
+
+## Configuration
+
+Set the forum root URL under <kbd>Settings/Preferences</kbd> > <kbd>Tools</kbd> >
+<kbd>Stage1st Reader</kbd>. The value is shared by all projects and is used by
+the forum, thread, and reply API requests.
 
 ---
 Plugin based on the [IntelliJ Platform Plugin Template][template].

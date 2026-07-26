@@ -1,6 +1,5 @@
 package com.github.reedoverflow.stage1streader.window;
 
-import com.github.reedoverflow.stage1streader.ui.ForumListUI;
 import com.github.reedoverflow.stage1streader.ui.ThreadListUI;
 import com.github.reedoverflow.stage1streader.ui.ThreadListUIProjectMap;
 import com.intellij.openapi.project.Project;

@@ -6,21 +6,7 @@ import javax.swing.*;
 
 public class ThreadListUI {
 
-    private static ThreadListUI instance;
-    private ThreadPanel mainPanel;
-
-    static {
-        instance = new ThreadListUI();
-    }
-
-//    private ThreadListUI() {
-//        mainPanel = new ThreadPanel();
-//    }
-
-//    public static ThreadListUI getInstance() {
-////        return instance;
-//        return new ThreadListUI();
-//    }
+    private final ThreadPanel mainPanel;
 
     public ThreadListUI() {
         mainPanel = new ThreadPanel();
