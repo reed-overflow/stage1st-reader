@@ -5,7 +5,7 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleJvm" value="java version &quot;11.0.9+11&quot;" />
+        <option name="gradleJvm" value="#PROJECT_JDK" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />

@@ -2,7 +2,7 @@ package com.github.reedoverflow.stage1streader.constant;
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.RoamingType;
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import org.jetbrains.annotations.NotNull;
@@ -84,7 +84,7 @@ public class Config implements PersistentStateComponent<Config.SettingsState> {
     private volatile SettingsState state = new SettingsState();
 
     public static Config getInstance() {
-        return ServiceManager.getService(Config.class);
+        return ApplicationManager.getApplication().getService(Config.class);
     }
 
     public String getUrl() {

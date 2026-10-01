@@ -1,4 +1,4 @@
-# Adapted from JetBrains/intellij-platform-plugin-template for the legacy 191 IDE target.
+# Build and verify the plugin on the IntelliJ Platform 223 baseline.
 name: Build
 
 on:
@@ -32,12 +32,12 @@ jobs:
       - name: Test release guards
         run: python3 -m unittest discover -s .github/scripts -p "test_*.py"
 
-      # Gradle 7.4 / IntelliJ Gradle plugin 1.x / IDEA 2019.1 use Java 11, not the template's Java 21.
+      # Java 17 is the language/runtime baseline for IDEA 2022.3.
       - name: Setup Java
         uses: actions/setup-java@v6
         with:
-          distribution: zulu
-          java-version: '11'
+          distribution: temurin
+          java-version: '17'
 
       # Includes Gradle Wrapper validation; no separate deprecated wrapper action is needed.
       - name: Setup Gradle
@@ -46,7 +46,7 @@ jobs:
           cache-read-only: ${{ github.event_name == 'pull_request' }}
 
       - name: Build, test and verify plugin
-        run: ./gradlew --no-daemon check buildPlugin runPluginVerifier
+        run: ./gradlew --no-daemon build verifyPlugin
 
       - name: Upload plugin ZIP
         uses: actions/upload-artifact@v7
