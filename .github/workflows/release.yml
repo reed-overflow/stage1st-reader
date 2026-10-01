@@ -1,87 +1,86 @@
-# GitHub Actions Workflow created for handling the release process based on the draft release prepared
-# with the Build workflow. Running the publishPlugin task requires the PUBLISH_TOKEN secret provided.
-
+# JetBrains official lifecycle: publish a GitHub Release, then publishPlugin uploads to Marketplace.
 name: Release
+
 on:
   release:
-    types: [prereleased, released]
+    types: [published]
+
+permissions:
+  contents: read
+
+# A signing/upload operation must not be interrupted by a second release.
+concurrency:
+  group: marketplace-publish
+  cancel-in-progress: false
 
 jobs:
-
-  # Prepare and publish the plugin to the Marketplace repository
   release:
-    name: Publish Plugin
+    name: Sign and publish plugin
     runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment: marketplace
+    permissions:
+      contents: write
     steps:
-
-      # Check out current repository
-      - name: Fetch Sources
-        uses: actions/checkout@v2.4.0
+      - name: Fetch tagged sources
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.release.tag_name }}
+          persist-credentials: false
 
-      # Setup Java 11 environment for the next steps
-      - name: Setup Java
-        uses: actions/setup-java@v2
-        with:
-          distribution: zulu
-          java-version: 11
-          cache: gradle
+      - name: Validate tag, version, channel and changelog
+        id: metadata
+        run: python3 .github/scripts/release_metadata.py --release
 
-      # Set environment variables
-      - name: Export Properties
-        id: properties
-        shell: bash
-        run: |
-          CHANGELOG="$(cat << 'EOM' | sed -e 's/^[[:space:]]*$//g' -e '/./,$!d'
-          ${{ github.event.release.body }}
-          EOM
-          )"
-          
-          CHANGELOG="${CHANGELOG//'%'/'%25'}"
-          CHANGELOG="${CHANGELOG//$'\n'/'%0A'}"
-          CHANGELOG="${CHANGELOG//$'\r'/'%0D'}"
-
-          echo "::set-output name=changelog::$CHANGELOG"
-
-      # Update Unreleased section with the current release note
-      - name: Patch Changelog
-        if: ${{ steps.properties.outputs.changelog != '' }}
-        env:
-          CHANGELOG: ${{ steps.properties.outputs.changelog }}
-        run: |
-          ./gradlew patchChangelog --release-note="$CHANGELOG"
-
-      # Publish the plugin to the Marketplace
-      - name: Publish Plugin
+      - name: Check required credentials
         env:
           PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
-        run: ./gradlew publishPlugin
+          CERTIFICATE_CHAIN: ${{ secrets.CERTIFICATE_CHAIN }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          PRIVATE_KEY_PASSWORD: ${{ secrets.PRIVATE_KEY_PASSWORD }}
+        run: python3 .github/scripts/release_metadata.py --check-secrets
 
-      # Upload artifact as a release asset
-      - name: Upload Release Asset
+      - name: Setup Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: zulu
+          java-version: '11'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: true
+
+      # A manually created release gets the same checks as a draft produced by Build.
+      - name: Test release guards
+        run: python3 -m unittest discover -s .github/scripts -p "test_*.py"
+
+      - name: Build, test and verify tagged sources
+        run: ./gradlew --no-daemon check buildPlugin runPluginVerifier
+
+      - name: Sign and publish to JetBrains Marketplace
+        id: publish
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload ${{ github.event.release.tag_name }} ./build/distributions/*
+          PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
+          CERTIFICATE_CHAIN: ${{ secrets.CERTIFICATE_CHAIN }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          PRIVATE_KEY_PASSWORD: ${{ secrets.PRIVATE_KEY_PASSWORD }}
+        run: ./gradlew --no-daemon publishPlugin
 
-      # Create pull request
-      - name: Create Pull Request
-        if: ${{ steps.properties.outputs.changelog != '' }}
+      # Preserve the exact signed file even if the Marketplace upload fails, for recovery.
+      - name: Preserve signed distribution
+        if: ${{ always() && (steps.publish.outcome == 'success' || steps.publish.outcome == 'failure') }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: signed-plugin-${{ steps.metadata.outputs.version }}
+          path: build/distributions/*-signed.zip
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Attach signed ZIP to GitHub Release
+        if: ${{ always() && steps.publish.outcome == 'success' }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          VERSION="${{ github.event.release.tag_name }}"
-          BRANCH="changelog-update-$VERSION"
-
-          git config user.email "action@github.com"
-          git config user.name "GitHub Action"
-
-          git checkout -b $BRANCH
-          git commit -am "Changelog update - $VERSION"
-          git push --set-upstream origin $BRANCH
-
-          gh pr create \
-            --title "Changelog update - \`$VERSION\`" \
-            --body "Current pull request contains patched \`CHANGELOG.md\` file for the \`$VERSION\` version." \
-            --base main \
-            --head $BRANCH
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.metadata.outputs.tag }}
+          SIGNED_ZIP: build/distributions/${{ steps.metadata.outputs.artifact_name }}-signed.zip
+        run: gh release upload "$RELEASE_TAG" "$SIGNED_ZIP" --clobber

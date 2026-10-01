@@ -1,6 +1,7 @@
 package com.github.reedoverflow.stage1streader.ui;
 
 import com.github.reedoverflow.stage1streader.ui.panel.ThreadPanel;
+import com.intellij.openapi.project.Project;
 
 import javax.swing.*;
 
@@ -8,8 +9,8 @@ public class ThreadListUI {
 
     private final ThreadPanel mainPanel;
 
-    public ThreadListUI() {
-        mainPanel = new ThreadPanel();
+    public ThreadListUI(Project project) {
+        mainPanel = new ThreadPanel(project);
     }
 
     public JComponent createComponent() {

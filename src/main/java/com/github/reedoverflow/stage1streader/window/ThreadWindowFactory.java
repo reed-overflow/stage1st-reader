@@ -16,7 +16,8 @@ public class ThreadWindowFactory implements ToolWindowFactory {
         ThreadListUIProjectMap map = ThreadListUIProjectMap.getInstance();
         ThreadListUI threadListUI = map.getThreadListUIByProject(project);
         ContentFactory instance = ContentFactory.SERVICE.getInstance();
-        Content content = instance.createContent(threadListUI.createComponent(), "Thread/Page", false);
+        Content content = instance.createContent(threadListUI.createComponent(), "Output", false);
         toolWindow.getContentManager().addContent(content);
+        com.github.reedoverflow.stage1streader.ui.WindowAppearance.apply(project);
     }
 }

@@ -2,6 +2,14 @@ package com.github.reedoverflow.stage1streader.ui.panel;
 
 import com.github.reedoverflow.stage1streader.domain.Forum;
 import com.github.reedoverflow.stage1streader.service.DiscuzService;
+import com.github.reedoverflow.stage1streader.service.ReaderEvents;
+import com.github.reedoverflow.stage1streader.utils.PostText;
+import com.github.reedoverflow.stage1streader.constant.Config;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowManager;
 import com.github.reedoverflow.stage1streader.ui.ThreadListUI;
 import com.github.reedoverflow.stage1streader.ui.ThreadListUIProjectMap;
 import com.intellij.icons.AllIcons;
@@ -29,12 +37,12 @@ import java.util.concurrent.ExecutionException;
 /**
  * Forum browser tree.
  */
-public class ForumListPanel extends JPanel {
+public class ForumListPanel extends JPanel implements Disposable {
 
     private static final Logger LOG = Logger.getInstance(ForumListPanel.class);
 
     private final Project project;
-    private final DiscuzService discuzService = new DiscuzService();
+    private boolean disposed;
     private final DefaultMutableTreeNode top = new DefaultMutableTreeNode("Forum list");
     private final Tree tree = new Tree(top);
 
@@ -44,6 +52,13 @@ public class ForumListPanel extends JPanel {
     public ForumListPanel(Project project) {
         super(new BorderLayout());
         this.project = project;
+        Disposer.register(project, this);
+        ApplicationManager.getApplication().getMessageBus().connect(this).subscribe(ReaderEvents.TOPIC,
+                reset -> {
+                    if (disposed) return;
+                    if (reset) createForumTree();
+                    com.github.reedoverflow.stage1streader.ui.WindowAppearance.apply(project);
+                });
 
         configureTree();
         add(new JBScrollPane(tree), BorderLayout.CENTER);
@@ -67,7 +82,8 @@ public class ForumListPanel extends JPanel {
                 if (userObject instanceof Forum) {
                     Forum forum = (Forum) userObject;
                     setIcon(hasChildren(forum) ? AllIcons.Nodes.Folder : AllIcons.FileTypes.Text);
-                    append(StringUtil.notNullize(forum.getName(), "Unnamed forum"));
+                    append(PostText.plain(StringUtil.notNullize(forum.getName(), "Unnamed forum"),
+                            Config.getInstance().getUrl()));
                 } else {
                     setIcon(null);
                     append(String.valueOf(userObject));
@@ -78,7 +94,7 @@ public class ForumListPanel extends JPanel {
         tree.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent event) {
-                if (event.getClickCount() != 2 || project.isDisposed()) {
+                if (event.getClickCount() != 2 || !SwingUtilities.isLeftMouseButton(event) || project.isDisposed()) {
                     return;
                 }
 
@@ -106,6 +122,8 @@ public class ForumListPanel extends JPanel {
                     ThreadListUIProjectMap map = ThreadListUIProjectMap.getInstance();
                     ThreadListUI threadListUI = map.getThreadListUIByProject(project);
                     threadListUI.getThreadByForumId(Integer.parseInt(forumId.trim()));
+                    ToolWindow reader = ToolWindowManager.getInstance(project).getToolWindow("S1 Reader");
+                    if (reader != null) reader.activate(null);
                 } catch (NumberFormatException e) {
                     LOG.warn("Invalid forum id returned by the forum: " + forumId, e);
                 }
@@ -118,11 +136,13 @@ public class ForumListPanel extends JPanel {
      * the component already belongs to the tool-window hierarchy.
      */
     public void createForumTree() {
+        if (disposed || project.isDisposed()) return;
         if (forumWorker != null && !forumWorker.isDone()) {
             forumWorker.cancel(true);
         }
 
         final long thisRequest = ++requestVersion;
+        final DiscuzService discuzService = new DiscuzService();
         showLoadingState();
 
         forumWorker = new SwingWorker<List<Forum>, Void>() {
@@ -133,7 +153,7 @@ public class ForumListPanel extends JPanel {
 
             @Override
             protected void done() {
-                if (thisRequest != requestVersion) {
+                if (disposed || project.isDisposed() || thisRequest != requestVersion || !discuzService.isCurrent()) {
                     return;
                 }
 
@@ -223,5 +243,11 @@ public class ForumListPanel extends JPanel {
             current = current.getCause();
         }
         return StringUtil.notNullize(current.getMessage(), current.getClass().getSimpleName());
+    }
+
+    @Override public void dispose() {
+        disposed = true;
+        ++requestVersion;
+        if (forumWorker != null) forumWorker.cancel(true);
     }
 }

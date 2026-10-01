@@ -11,13 +11,15 @@
     <description>
         <![CDATA[
         <a href="https://github.com/reed-overflow/stage1st-reader">Plugin homepage</a>
-        A plugin that allows you to access <a href="http://bbs.saraba1st.com/2b/">stage1st</a> , one of the biggest BBS in China.
+        A configurable Discuz client for <a href="https://stage1st.com/2b/">stage1st</a>,
+        with text browsing, login, replies, posting, local bookmarks and discreet tool windows.
         ]]>
     </description>
 
     <!-- 工具栏 -->
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="com.github.reedoverflow.stage1streader.constant.Config"/>
+        <applicationService serviceImplementation="com.github.reedoverflow.stage1streader.service.SessionManager"/>
         <applicationConfigurable id="com.github.reedoverflow.stage1streader.settings"
                                  displayName="Stage1st Reader"
                                  parentId="tools"
@@ -32,5 +34,11 @@
                     anchor="bottom" icon="AllIcons.Nodes.Folder">
         </toolWindow>
     </extensions>
+    <actions>
+        <action id="Stage1stReader.Hide" class="com.github.reedoverflow.stage1streader.action.HideReaderAction"
+                text="Hide Reader Windows" description="Hide both reader tool windows">
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift F12"/>
+        </action>
+    </actions>
     
 </idea-plugin>

@@ -1,6 +1,11 @@
 package com.github.reedoverflow.stage1streader.ui;
 
 import com.github.reedoverflow.stage1streader.action.ForumRefreshAction;
+import com.github.reedoverflow.stage1streader.action.HideReaderAction;
+import com.github.reedoverflow.stage1streader.service.SessionManager;
+import com.github.reedoverflow.stage1streader.settings.Stage1stReaderConfigurable;
+import com.intellij.icons.AllIcons;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.github.reedoverflow.stage1streader.ui.panel.ForumListPanel;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
@@ -25,6 +30,18 @@ public class ForumListUI {
         // 工具栏action
         List<AnAction> actionList = new ArrayList<>();
         actionList.add(new ForumRefreshAction(forumListPanel));
+        actionList.add(new AnAction("登录 / 切换账号","登录/切换账号", AllIcons.Debugger.SmartStepInto) {
+            @Override public void actionPerformed(AnActionEvent e) { new AccountDialog(project).show(); }
+        });
+        actionList.add(new AnAction("退出登录", "清除当前登录及设置中保存的 Cookie", AllIcons.Actions.StepOut) {
+            @Override public void actionPerformed(AnActionEvent e) { SessionManager.getInstance().logout(); }
+        });
+        actionList.add(new AnAction("设置","设置",AllIcons.Debugger.VariablesTab) {
+            @Override public void actionPerformed(AnActionEvent e) {
+                ShowSettingsUtil.getInstance().showSettingsDialog(project, Stage1stReaderConfigurable.class);
+            }
+        });
+        actionList.add(new HideReaderAction());
         DefaultActionGroup defaultActionGroup = new DefaultActionGroup(actionList);
         // 设置工具栏
         toolbarPanel = new SimpleToolWindowPanel(true);

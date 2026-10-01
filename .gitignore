@@ -2,3 +2,7 @@
 .idea
 .qodana
 build
+__pycache__/
+# Keep locally generated signing material out of Git; store Actions copies in Secrets.
+.signing/
+/docs/
