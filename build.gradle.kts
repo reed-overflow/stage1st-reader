@@ -28,7 +28,7 @@ val marketplaceSigner by configurations.creating {
 }
 
 dependencies {
-    implementation("org.apache.httpcomponents:httpclient:4.5.13")
+    implementation("org.apache.httpcomponents:httpclient:4.5.14")
     testImplementation("junit:junit:4.13.2")
     add(marketplaceSigner.name, "org.jetbrains:marketplace-zip-signer-cli:" + properties("signingCliVersion"))
 }
