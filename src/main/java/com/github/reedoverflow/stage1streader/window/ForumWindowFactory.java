@@ -13,7 +13,7 @@ public class ForumWindowFactory implements ToolWindowFactory {
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         ForumListUI forumListUI = new ForumListUI(project);
-        ContentFactory instance = ContentFactory.SERVICE.getInstance();
+        ContentFactory instance = ContentFactory.getInstance();
         Content content = instance.createContent(forumListUI.createComponent(), "Index", false);
         toolWindow.getContentManager().addContent(content);
         com.github.reedoverflow.stage1streader.ui.WindowAppearance.apply(project);

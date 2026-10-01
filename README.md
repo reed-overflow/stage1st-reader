@@ -50,6 +50,30 @@ all browsing, login, and posting requests. Default: `https://stage1st.com/2b/`.
 引用采用普通 BBCode 和原楼链接，不承诺触发 Discuz 原生引用通知。搜索范围是当前页。
 登录权限、发帖间隔、版块维护、审核和风控均遵循服务器返回结果。
 
+## 构建与依赖维护
+
+安装 JDK 17（推荐 Temurin），将 IDEA 的 **Gradle JVM** 和命令行的 `JAVA_HOME` 设为 JDK 17，使用仓库自带的 Wrapper：
+
+```sh
+./gradlew --no-daemon build verifyPlugin
+```
+
+Windows 使用 `.\gradlew.bat`。`build` 执行编译、插桩、测试和打包，产物位于
+`build/distributions/`；`verifyPlugin` 检查 IDE 兼容性。`runIde` 启动带插件的开发 IDE。
+
+构建使用 IntelliJ Platform Gradle Plugin **2.13.1**、Gradle **9.8.0** 和 Java **17**。
+`gradle/gradle-daemon-jvm.properties` 将构建进程固定为 **Temurin 17**，未安装时由 Gradle 自动下载，
+避免 Ant 对 Microsoft JDK 的错误识别。此配置优先于本机选择的 Gradle JVM，不包含机器专属路径。
+以 IDEA **2022.3（223）** 为编译基线，不设置版本上限。IDE 和测试运行时由 2.x 插件管理，
+不再需要 Java 11、手工 JDK 类归档或 Ant 插桩补丁。开发 IDE、运行时和依赖首次构建时自动下载。
+
+`verifyPlugin` 复用最低版本 SDK，并检查 `pluginVerifierIdeVersions` 指定的 **2025.2.6.3 社区版**。
+兼容性错误、无效插件和缺失依赖会阻止发布；这些检查不代表已经验证所有中间及未来版本。
+
+Dependabot 每月检查更新。构建插件 **2.14+ 要求最低 IDEA 2023.3**，因此暂限在 2.13.x；
+提高构建插件版本前需先评估最低 IDE 支持范围。更新 Wrapper 时同步更新 `gradleVersion`、
+官方 SHA-256 校验值及 Wrapper 文件。签名和发布继续使用现有环境变量。
+
 ---
 Plugin based on the [IntelliJ Platform Plugin Template][template].
 

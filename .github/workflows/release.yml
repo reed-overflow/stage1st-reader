@@ -43,8 +43,8 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v6
         with:
-          distribution: zulu
-          java-version: '11'
+          distribution: temurin
+          java-version: '17'
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
@@ -56,7 +56,7 @@ jobs:
         run: python3 -m unittest discover -s .github/scripts -p "test_*.py"
 
       - name: Build, test and verify tagged sources
-        run: ./gradlew --no-daemon check buildPlugin runPluginVerifier
+        run: ./gradlew --no-daemon build verifyPlugin
 
       - name: Sign and publish to JetBrains Marketplace
         id: publish

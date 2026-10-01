@@ -7,9 +7,13 @@ updates:
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "monthly"
+    # 2.14+ requires IDEA 2023.3; retain the declared 2022.3 minimum.
+    ignore:
+      - dependency-name: "org.jetbrains.intellij.platform"
+        versions: [">=2.14.0"]
   # Maintain dependencies for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "monthly"

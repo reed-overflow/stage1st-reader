@@ -3,7 +3,7 @@ package com.github.reedoverflow.stage1streader.service;
 import com.github.reedoverflow.stage1streader.constant.Config;
 import com.github.reedoverflow.stage1streader.utils.HTTPUtil;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.application.ApplicationManager;
 
 /** Application-wide sessions backed by local settings; passwords are never retained. */
 public final class SessionManager implements Disposable {
@@ -18,7 +18,7 @@ public final class SessionManager implements Disposable {
     }
 
     private Session current;
-    public static SessionManager getInstance() { return ServiceManager.getService(SessionManager.class); }
+    public static SessionManager getInstance() { return ApplicationManager.getApplication().getService(SessionManager.class); }
 
     public synchronized Session current() {
         String root = Config.getInstance().getUrl();
